@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexagon Grid</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+            padding: 50px;
+        }
+        .grid {
+            width: 20%;
+        }
+        .tile polygon {
+            fill: #fff;
+            stroke: #000;
+            stroke-width: 1px;
+        }
+
+        .tile polygon {
+            fill: #000;
+        }
+
+        .tile div:hover + text {
+            fill: #fff;
+        }
+
+        .tile text {
+            pointer-events: none;
+        }
+
+        .tile div {
+            pointer-events: none;
+            position: relative;
+            height: 100%;
+            width: 100%;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+        .tile div::before {
+            content: '';
+            z-index: 50;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: block;
+            height: 100%;
+            width: 100%;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid" id="grid"></div>
+    <div class="grid" id="grid_two"></div>
+    <div class="grid" id="grid_three"></div>
+    <div class="grid" id="grid_four"></div>
+
+    <script src="./bestagon-grid.js"></script>
+    <script>
+        const grid = new BestagonGrid(4, '#grid');
+        const grid_two = new BestagonGrid([8, 4], '#grid_two', 'grid', 'flat', 'even');
+        const grid_three = new BestagonGrid([4, 8], '#grid_three', 'grid', 'pointy', 'even');
+        const grid_four = new BestagonGrid([4, 8], '#grid_four', 'grid', 'pointy');
+    </script>
+</body>
+</html>

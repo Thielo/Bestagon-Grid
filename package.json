@@ -1,0 +1,25 @@
+{
+  "name": "hexagons",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hexagon.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "dev": "tsc --watch",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gts": "^5.0.1",
+    "typescript": "^5.2.2",
+    "@types/node": "20.4.6"
+  }
+}
