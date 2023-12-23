@@ -13,21 +13,23 @@ declare enum HexagonOrder {
 interface HexagonData {
     column: number;
     row: number;
-    type: string;
+    type: string | string[];
 }
 declare class BestagonGrid {
     private size;
     private rows;
     private columns;
     private containerSelector;
+    private data;
+    private debug;
     private gridType;
     private hexagonType;
     private hexagonOrder;
     private hexagonGridWrapper;
     private grid;
-    static HEXAGON_RADIUS: number;
-    static HEXAGON_POLYGON_POINTS: string;
-    static HEXAGON_OFFSETS: {
+    static HEX_RADIUS: number;
+    static HEX_POLYGON: string;
+    static HEX_OFFSETS: {
         pointy: {
             even: {
                 X: number;
@@ -49,7 +51,7 @@ declare class BestagonGrid {
             };
         };
     };
-    constructor(size: [number, number] | number, containerSelector: string, gridType?: GridType, hexagonType?: HexagonType, hexagonOrder?: HexagonOrder, data?: HexagonData[]);
+    constructor(size: [number, number] | number, containerSelector: string, gridType?: GridType, hexagonType?: HexagonType, hexagonOrder?: HexagonOrder, data?: HexagonData[], debug?: boolean);
     private initGrid;
     private handleHexagonClick;
     generateHexagon(column: number, row: number): void;

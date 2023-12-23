@@ -9,49 +9,27 @@
         body {
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
             padding: 50px;
         }
+
         .grid {
             width: 20%;
         }
-        .tile polygon {
-            fill: #fff;
-            stroke: #000;
-            stroke-width: 1px;
-        }
-
-        .tile polygon {
-            fill: #000;
-        }
-
-        .tile div:hover + text {
-            fill: #fff;
-        }
-
-        .tile text {
-            pointer-events: none;
-        }
 
         .tile div {
-            pointer-events: none;
-            position: relative;
             height: 100%;
             width: 100%;
-            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            background-color: #000;
+            cursor: pointer;
+            transition: all .8s;
         }
-        .tile div::before {
-            content: '';
-            z-index: 50;
-            position: absolute;
-            left: 0;
-            top: 0;
-            display: block;
-            height: 100%;
-            width: 100%;
-            box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+
+        .tile:hover div {
+            background-color: #555;
         }
     </style>
-</head>
+</head> 
 <body>
     <div class="grid" id="grid"></div>
     <div class="grid" id="grid_two"></div>
@@ -60,8 +38,28 @@
 
     <script src="./bestagon-grid.js"></script>
     <script>
+        const data = [
+            { column: 0, row: 0, type: ['blue_star-4'] },
+            { column: 0, row: 1, type: ['blue_star-5'] },
+            { column: 0, row: 3, type: ['blue_star-6'] },
+            { column: 0, row: 2, type: ['planet-7'] },
+            { column: 1, row: 0, type: ['planet-8'] },
+            { column: 1, row: 1, type: ['planet-9'] },
+            { column: 1, row: 2, type: ['planet-10'] },
+            { column: 1, row: 3, type: ['planet-11'] },
+            { column: 2, row: 0, type: ['planet-12'] },
+            { column: 2, row: 1, type: ['sun-1'] },
+            { column: 2, row: 2, type: ['sun-2'] },
+            { column: 2, row: 3, type: ['sun-3'] },
+            { column: 3, row: 0, type: ['yellow_star-3'] },
+            { column: 3, row: 1, type: ['yellow_star-4'] },
+            { column: 3, row: 2, type: ['yellow_star-5'] },
+            { column: 3, row: 3, type: ['asteroid-8'] },
+            { column: 4, row: 0, type: ['asteroid-9'] }
+        ];
+
         const grid = new BestagonGrid(4, '#grid');
-        const grid_two = new BestagonGrid([8, 4], '#grid_two', 'grid', 'flat', 'even');
+        const grid_two = new BestagonGrid([8, 4], '#grid_two', 'grid', 'flat', 'even', data, false);
         const grid_three = new BestagonGrid([4, 8], '#grid_three', 'grid', 'pointy', 'even');
         const grid_four = new BestagonGrid([4, 8], '#grid_four', 'grid', 'pointy');
     </script>
