@@ -28,7 +28,7 @@ var BestagonGrid = /** @class */ (function () {
         this.initGrid();
     }
     BestagonGrid.prototype.initGrid = function () {
-        var _a;
+        var _b;
         var container = document.querySelector(this.containerSelector);
         if (!container) {
             throw new Error("Container with selector ".concat(this.containerSelector, " not found."));
@@ -40,14 +40,14 @@ var BestagonGrid = /** @class */ (function () {
             "bestagon-hType--".concat(this.hexagonType),
             "bestagon-hOrder--".concat(this.hexagonOrder),
         ];
-        (_a = this.hexagonGridWrapper.classList).add.apply(_a, classes);
+        (_b = this.hexagonGridWrapper.classList).add.apply(_b, classes);
         this.hexagonGridWrapper.setAttribute('viewBox', this.generateViewBox());
         container.appendChild(this.hexagonGridWrapper);
         var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         var clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
         clipPath.setAttribute('id', 'hexagon');
         var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-        polygon.setAttribute('points', BestagonGrid.HEX_POLYGON);
+        polygon.setAttribute('points', _a.HEX_POLYGON);
         clipPath.appendChild(polygon);
         defs.appendChild(clipPath);
         var style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
@@ -76,8 +76,8 @@ var BestagonGrid = /** @class */ (function () {
         g.classList.add('tile');
         g.setAttribute('transform', "translate(".concat(offsetX, ",").concat(offsetY, ")"));
         var foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-        foreignObject.setAttribute('width', '200');
-        foreignObject.setAttribute('height', '174');
+        foreignObject.setAttribute('width', (_a.HEX_RADIUS * 2).toString());
+        foreignObject.setAttribute('height', (_a.HEX_APOTHEM * 2).toString());
         var div = document.createElement('div');
         div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
         div.addEventListener('click', function (event) {
@@ -101,11 +101,11 @@ var BestagonGrid = /** @class */ (function () {
     };
     BestagonGrid.prototype.generateViewBox = function () {
         var viewboxX = this.columns *
-            BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X +
-            BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X / 3;
+            _a.HEX_OFFSETS.X +
+            _a.HEX_OFFSETS.X / 3;
         var viewboxY = this.rows *
-            (BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y * 2) +
-            BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y;
+            (_a.HEX_OFFSETS.Y * 2) +
+            _a.HEX_OFFSETS.Y;
         if (this.hexagonType === HexagonType.Pointy) {
             if (this.hexagonOrder === HexagonOrder.Odd) {
                 return "-44 -75 ".concat(viewboxY, " ").concat(viewboxX);
@@ -117,31 +117,31 @@ var BestagonGrid = /** @class */ (function () {
     BestagonGrid.prototype.generateXPosition = function (row, column) {
         if (this.hexagonType === HexagonType.Pointy) {
             var posX = Math.floor(row / 2) *
-                BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X *
+                _a.HEX_OFFSETS.X *
                 -1 +
                 column *
-                    BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X;
+                    _a.HEX_OFFSETS.X;
             return this.hexagonOrder === HexagonOrder.Odd && row % 2
-                ? posX - BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X
+                ? posX - _a.HEX_OFFSETS.X
                 : posX;
         }
-        return (column * BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X);
+        return (column * _a.HEX_OFFSETS.X);
     };
     BestagonGrid.prototype.generateYPosition = function (row, column) {
         if (this.hexagonType === HexagonType.Pointy) {
-            var posY = row * BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y +
+            var posY = row * _a.HEX_OFFSETS.Y +
                 (Math.ceil(row / 2) + column) *
-                    BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y;
+                    _a.HEX_OFFSETS.Y;
             return this.hexagonOrder === HexagonOrder.Odd && row % 2
-                ? posY - BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y
+                ? posY - _a.HEX_OFFSETS.Y
                 : posY;
         }
         var defineOffsetColumn = this.hexagonOrder === HexagonOrder.Even ? 0 : 1;
         var isOffsetColumn = column % 2 === defineOffsetColumn;
         return (row *
-            (BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y * 2) +
+            (_a.HEX_OFFSETS.Y * 2) +
             (isOffsetColumn
-                ? BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y
+                ? _a.HEX_OFFSETS.Y
                 : 0));
     };
     BestagonGrid.prototype.editHexagon = function (column, row, content, newClass) {
@@ -157,29 +157,14 @@ var BestagonGrid = /** @class */ (function () {
         hexagon.setAttribute('class', "tile ".concat(newClass));
         console.log("Edited Hexagon - Column: ".concat(column, ", Row: ").concat(row));
     };
+    var _a;
+    _a = BestagonGrid;
     BestagonGrid.HEX_RADIUS = 100;
-    BestagonGrid.HEX_POLYGON = '200,87 150,0 50,0 0,87 50,174 150,174';
+    BestagonGrid.HEX_APOTHEM = 87;
+    BestagonGrid.HEX_POLYGON = "".concat(_a.HEX_RADIUS * 2, ",").concat(_a.HEX_APOTHEM, " ").concat(_a.HEX_RADIUS * 1.5, ",0 ").concat(_a.HEX_RADIUS / 2, ",0 0,").concat(_a.HEX_APOTHEM, " ").concat(_a.HEX_RADIUS / 2, ",").concat(_a.HEX_APOTHEM * 2, " ").concat(_a.HEX_RADIUS * 1.5, ",").concat(_a.HEX_APOTHEM * 2);
     BestagonGrid.HEX_OFFSETS = {
-        pointy: {
-            even: {
-                X: 150,
-                Y: 87,
-            },
-            odd: {
-                X: 150,
-                Y: 87,
-            },
-        },
-        flat: {
-            even: {
-                X: 150,
-                Y: 87,
-            },
-            odd: {
-                X: 150,
-                Y: 87,
-            },
-        },
+        X: _a.HEX_RADIUS * 1.5,
+        Y: _a.HEX_APOTHEM,
     };
     return BestagonGrid;
 }());

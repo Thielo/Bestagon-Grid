@@ -28,28 +28,11 @@ declare class BestagonGrid {
     private hexagonGridWrapper;
     private grid;
     static HEX_RADIUS: number;
+    static HEX_APOTHEM: number;
     static HEX_POLYGON: string;
     static HEX_OFFSETS: {
-        pointy: {
-            even: {
-                X: number;
-                Y: number;
-            };
-            odd: {
-                X: number;
-                Y: number;
-            };
-        };
-        flat: {
-            even: {
-                X: number;
-                Y: number;
-            };
-            odd: {
-                X: number;
-                Y: number;
-            };
-        };
+        X: number;
+        Y: number;
     };
     constructor(size: [number, number] | number, containerSelector: string, gridType?: GridType, hexagonType?: HexagonType, hexagonOrder?: HexagonOrder, data?: HexagonData[], debug?: boolean);
     private initGrid;

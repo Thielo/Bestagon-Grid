@@ -33,28 +33,11 @@ class BestagonGrid {
   private grid!: SVGGElement;
 
   static HEX_RADIUS = 100;
-  static HEX_POLYGON = '200,87 150,0 50,0 0,87 50,174 150,174';
+  static HEX_APOTHEM = 87;
+  static HEX_POLYGON = `${this.HEX_RADIUS*2},${this.HEX_APOTHEM} ${this.HEX_RADIUS*1.5},0 ${this.HEX_RADIUS/2},0 0,${this.HEX_APOTHEM} ${this.HEX_RADIUS/2},${this.HEX_APOTHEM*2} ${this.HEX_RADIUS*1.5},${this.HEX_APOTHEM*2}`;
   static HEX_OFFSETS = {
-    pointy: {
-      even: {
-        X: 150,
-        Y: 87,
-      },
-      odd: {
-        X: 150,
-        Y: 87,
-      },
-    },
-    flat: {
-      even: {
-        X: 150,
-        Y: 87,
-      },
-      odd: {
-        X: 150,
-        Y: 87,
-      },
-    },
+    X: this.HEX_RADIUS*1.5,
+    Y: this.HEX_APOTHEM,
   };
 
   constructor(
@@ -105,10 +88,8 @@ class BestagonGrid {
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
     clipPath.setAttribute('id', 'hexagon');
-    const polygon = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'polygon'
-    );
+
+    const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     polygon.setAttribute('points', BestagonGrid.HEX_POLYGON);
     clipPath.appendChild(polygon);
     defs.appendChild(clipPath);
@@ -149,8 +130,8 @@ class BestagonGrid {
       'http://www.w3.org/2000/svg',
       'foreignObject'
     );
-    foreignObject.setAttribute('width', '200');
-    foreignObject.setAttribute('height', '174');
+    foreignObject.setAttribute('width', (BestagonGrid.HEX_RADIUS * 2).toString());
+    foreignObject.setAttribute('height', (BestagonGrid.HEX_APOTHEM * 2).toString());
     const div = document.createElement('div');
     div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
 
@@ -179,12 +160,12 @@ class BestagonGrid {
   private generateViewBox() {
     const viewboxX =
       this.columns *
-        BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X +
-      BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X / 3;
+        BestagonGrid.HEX_OFFSETS.X +
+      BestagonGrid.HEX_OFFSETS.X / 3;
     const viewboxY =
       this.rows *
-        (BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y * 2) +
-      BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y;
+        (BestagonGrid.HEX_OFFSETS.Y * 2) +
+      BestagonGrid.HEX_OFFSETS.Y;
 
     if (this.hexagonType === HexagonType.Pointy) {
       if (this.hexagonOrder === HexagonOrder.Odd) {
@@ -199,29 +180,29 @@ class BestagonGrid {
     if (this.hexagonType === HexagonType.Pointy) {
       const posX =
         Math.floor(row / 2) *
-          BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X *
+          BestagonGrid.HEX_OFFSETS.X *
           -1 +
         column *
-          BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X;
+          BestagonGrid.HEX_OFFSETS.X;
       return this.hexagonOrder === HexagonOrder.Odd && row % 2
-        ? posX - BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X
+        ? posX - BestagonGrid.HEX_OFFSETS.X
         : posX;
     }
 
     return (
-      column * BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].X
+      column * BestagonGrid.HEX_OFFSETS.X
     );
   }
 
   private generateYPosition(row: number, column: number) {
     if (this.hexagonType === HexagonType.Pointy) {
       const posY =
-        row * BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y +
+        row * BestagonGrid.HEX_OFFSETS.Y +
         (Math.ceil(row / 2) + column) *
-          BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y;
+          BestagonGrid.HEX_OFFSETS.Y;
 
       return this.hexagonOrder === HexagonOrder.Odd && row % 2
-        ? posY - BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y
+        ? posY - BestagonGrid.HEX_OFFSETS.Y
         : posY;
     }
 
@@ -229,9 +210,9 @@ class BestagonGrid {
     const isOffsetColumn = column % 2 === defineOffsetColumn;
     return (
       row *
-        (BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y * 2) +
+        (BestagonGrid.HEX_OFFSETS.Y * 2) +
       (isOffsetColumn
-        ? BestagonGrid.HEX_OFFSETS[this.hexagonType][this.hexagonOrder].Y
+        ? BestagonGrid.HEX_OFFSETS.Y
         : 0)
     );
   }
