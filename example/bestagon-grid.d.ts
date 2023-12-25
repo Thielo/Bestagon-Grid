@@ -28,7 +28,9 @@ declare class BestagonGrid {
     private hexagonGridWrapper;
     private grid;
     static HEX_RADIUS: number;
+    static HEX_DIAGONAL_LONG: number;
     static HEX_APOTHEM: number;
+    static HEX_DIAGONAL_SHORT: number;
     static HEX_POLYGON: string;
     static HEX_OFFSETS: {
         X: number;
@@ -42,5 +44,6 @@ declare class BestagonGrid {
     private generateXPosition;
     private generateYPosition;
     private editHexagon;
+    private logger;
 }
 declare function createBestagonGrid(size: [number, number] | number, containerSelector: string, gridType: GridType, hexagonType: HexagonType): BestagonGrid;

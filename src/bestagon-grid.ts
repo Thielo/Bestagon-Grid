@@ -33,8 +33,10 @@ class BestagonGrid {
   private grid!: SVGGElement;
 
   static HEX_RADIUS = 100;
+  static HEX_DIAGONAL_LONG = this.HEX_RADIUS * 2;
   static HEX_APOTHEM = 87;
-  static HEX_POLYGON = `${this.HEX_RADIUS*2},${this.HEX_APOTHEM} ${this.HEX_RADIUS*1.5},0 ${this.HEX_RADIUS/2},0 0,${this.HEX_APOTHEM} ${this.HEX_RADIUS/2},${this.HEX_APOTHEM*2} ${this.HEX_RADIUS*1.5},${this.HEX_APOTHEM*2}`;
+  static HEX_DIAGONAL_SHORT = this.HEX_APOTHEM * 2;
+  static HEX_POLYGON = `${this.HEX_DIAGONAL_LONG},${this.HEX_APOTHEM} ${this.HEX_RADIUS*1.5},0 ${this.HEX_RADIUS/2},0 0,${this.HEX_APOTHEM} ${this.HEX_RADIUS/2},${this.HEX_DIAGONAL_SHORT} ${this.HEX_RADIUS*1.5},${this.HEX_DIAGONAL_SHORT}`;
   static HEX_OFFSETS = {
     X: this.HEX_RADIUS*1.5,
     Y: this.HEX_APOTHEM,
@@ -130,8 +132,8 @@ class BestagonGrid {
       'http://www.w3.org/2000/svg',
       'foreignObject'
     );
-    foreignObject.setAttribute('width', (BestagonGrid.HEX_RADIUS * 2).toString());
-    foreignObject.setAttribute('height', (BestagonGrid.HEX_APOTHEM * 2).toString());
+    foreignObject.setAttribute('width', (BestagonGrid.HEX_DIAGONAL_LONG).toString());
+    foreignObject.setAttribute('height', (BestagonGrid.HEX_DIAGONAL_SHORT).toString());
     const div = document.createElement('div');
     div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
 
@@ -158,6 +160,22 @@ class BestagonGrid {
   }
 
   private generateViewBox() {
+    if (this.hexagonType === HexagonType.Pointy) {
+      const viewboxX =
+        this.columns *
+        BestagonGrid.HEX_DIAGONAL_SHORT +
+        (this.rows > 1 ? BestagonGrid.HEX_APOTHEM : 0);
+      const viewboxY =
+        (4*200)-(3*50)
+        this.rows *
+        BestagonGrid.HEX_DIAGONAL_LONG -
+        ((BestagonGrid.HEX_RADIUS / 2) * (this.rows - 1));
+      if (this.hexagonOrder === HexagonOrder.Odd) {
+        return `-44 -75 ${viewboxX} ${viewboxY}`;
+      }
+      return `42 -75 ${viewboxX} ${viewboxY}`;
+    }
+
     const viewboxX =
       this.columns *
         BestagonGrid.HEX_OFFSETS.X +
@@ -166,13 +184,6 @@ class BestagonGrid {
       this.rows *
         (BestagonGrid.HEX_OFFSETS.Y * 2) +
       BestagonGrid.HEX_OFFSETS.Y;
-
-    if (this.hexagonType === HexagonType.Pointy) {
-      if (this.hexagonOrder === HexagonOrder.Odd) {
-        return `-44 -75 ${viewboxY} ${viewboxX}`;
-      }
-      return `42 -75 ${viewboxY} ${viewboxX}`;
-    }
     return `0 0 ${viewboxX} ${viewboxY}`;
   }
 
@@ -185,12 +196,12 @@ class BestagonGrid {
         column *
           BestagonGrid.HEX_OFFSETS.X;
       return this.hexagonOrder === HexagonOrder.Odd && row % 2
-        ? posX - BestagonGrid.HEX_OFFSETS.X
-        : posX;
+        ? posX - BestagonGrid.HEX_OFFSETS.X - column
+        : posX - column;
     }
 
     return (
-      column * BestagonGrid.HEX_OFFSETS.X
+      column * BestagonGrid.HEX_OFFSETS.X - column
     );
   }
 
@@ -202,8 +213,8 @@ class BestagonGrid {
           BestagonGrid.HEX_OFFSETS.Y;
 
       return this.hexagonOrder === HexagonOrder.Odd && row % 2
-        ? posY - BestagonGrid.HEX_OFFSETS.Y
-        : posY;
+        ? posY - BestagonGrid.HEX_OFFSETS.Y - row
+        : posY - row;
     }
 
     const defineOffsetColumn = this.hexagonOrder === HexagonOrder.Even ? 0 : 1;
@@ -212,8 +223,8 @@ class BestagonGrid {
       row *
         (BestagonGrid.HEX_OFFSETS.Y * 2) +
       (isOffsetColumn
-        ? BestagonGrid.HEX_OFFSETS.Y
-        : 0)
+        ? BestagonGrid.HEX_OFFSETS.Y - row
+        : 0 - row)
     );
   }
 
@@ -228,7 +239,7 @@ class BestagonGrid {
     ] as SVGGElement;
 
     if (!hexagon) {
-      console.error(`Hexagon not found - Column: ${column}, Row: ${row}`);
+      this.logger(`Hexagon not found - Column: ${column}, Row: ${row}`, 'error');
       return;
     }
 
@@ -238,6 +249,16 @@ class BestagonGrid {
     }
     hexagon.setAttribute('class', `tile ${newClass}`);
     console.log(`Edited Hexagon - Column: ${column}, Row: ${row}`);
+  }
+
+  private logger(data: any, type: 'log' | 'error' = 'log') {
+    if (!this.debug) {
+      if (type === 'error') {
+        console.error(data);
+      } else {
+        console.log(data);
+      }
+    }
   }
 }
 

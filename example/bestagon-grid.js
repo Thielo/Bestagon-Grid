@@ -76,8 +76,8 @@ var BestagonGrid = /** @class */ (function () {
         g.classList.add('tile');
         g.setAttribute('transform', "translate(".concat(offsetX, ",").concat(offsetY, ")"));
         var foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-        foreignObject.setAttribute('width', (_a.HEX_RADIUS * 2).toString());
-        foreignObject.setAttribute('height', (_a.HEX_APOTHEM * 2).toString());
+        foreignObject.setAttribute('width', (_a.HEX_DIAGONAL_LONG).toString());
+        foreignObject.setAttribute('height', (_a.HEX_DIAGONAL_SHORT).toString());
         var div = document.createElement('div');
         div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
         div.addEventListener('click', function (event) {
@@ -100,18 +100,25 @@ var BestagonGrid = /** @class */ (function () {
         this.grid.appendChild(g);
     };
     BestagonGrid.prototype.generateViewBox = function () {
+        if (this.hexagonType === HexagonType.Pointy) {
+            var viewboxX_1 = this.columns *
+                _a.HEX_DIAGONAL_SHORT +
+                (this.rows > 1 ? _a.HEX_APOTHEM : 0);
+            var viewboxY_1 = (4 * 200) - (3 * 50);
+            this.rows *
+                _a.HEX_DIAGONAL_LONG -
+                ((_a.HEX_RADIUS / 2) * (this.rows - 1));
+            if (this.hexagonOrder === HexagonOrder.Odd) {
+                return "-44 -75 ".concat(viewboxX_1, " ").concat(viewboxY_1);
+            }
+            return "42 -75 ".concat(viewboxX_1, " ").concat(viewboxY_1);
+        }
         var viewboxX = this.columns *
             _a.HEX_OFFSETS.X +
             _a.HEX_OFFSETS.X / 3;
         var viewboxY = this.rows *
             (_a.HEX_OFFSETS.Y * 2) +
             _a.HEX_OFFSETS.Y;
-        if (this.hexagonType === HexagonType.Pointy) {
-            if (this.hexagonOrder === HexagonOrder.Odd) {
-                return "-44 -75 ".concat(viewboxY, " ").concat(viewboxX);
-            }
-            return "42 -75 ".concat(viewboxY, " ").concat(viewboxX);
-        }
         return "0 0 ".concat(viewboxX, " ").concat(viewboxY);
     };
     BestagonGrid.prototype.generateXPosition = function (row, column) {
@@ -122,10 +129,10 @@ var BestagonGrid = /** @class */ (function () {
                 column *
                     _a.HEX_OFFSETS.X;
             return this.hexagonOrder === HexagonOrder.Odd && row % 2
-                ? posX - _a.HEX_OFFSETS.X
-                : posX;
+                ? posX - _a.HEX_OFFSETS.X - column
+                : posX - column;
         }
-        return (column * _a.HEX_OFFSETS.X);
+        return (column * _a.HEX_OFFSETS.X - column);
     };
     BestagonGrid.prototype.generateYPosition = function (row, column) {
         if (this.hexagonType === HexagonType.Pointy) {
@@ -133,21 +140,21 @@ var BestagonGrid = /** @class */ (function () {
                 (Math.ceil(row / 2) + column) *
                     _a.HEX_OFFSETS.Y;
             return this.hexagonOrder === HexagonOrder.Odd && row % 2
-                ? posY - _a.HEX_OFFSETS.Y
-                : posY;
+                ? posY - _a.HEX_OFFSETS.Y - row
+                : posY - row;
         }
         var defineOffsetColumn = this.hexagonOrder === HexagonOrder.Even ? 0 : 1;
         var isOffsetColumn = column % 2 === defineOffsetColumn;
         return (row *
             (_a.HEX_OFFSETS.Y * 2) +
             (isOffsetColumn
-                ? _a.HEX_OFFSETS.Y
-                : 0));
+                ? _a.HEX_OFFSETS.Y - row
+                : 0 - row));
     };
     BestagonGrid.prototype.editHexagon = function (column, row, content, newClass) {
         var hexagon = this.grid.children[row * this.columns + column];
         if (!hexagon) {
-            console.error("Hexagon not found - Column: ".concat(column, ", Row: ").concat(row));
+            this.logger("Hexagon not found - Column: ".concat(column, ", Row: ").concat(row), 'error');
             return;
         }
         var textElement = hexagon.querySelector('text');
@@ -157,11 +164,24 @@ var BestagonGrid = /** @class */ (function () {
         hexagon.setAttribute('class', "tile ".concat(newClass));
         console.log("Edited Hexagon - Column: ".concat(column, ", Row: ").concat(row));
     };
+    BestagonGrid.prototype.logger = function (data, type) {
+        if (type === void 0) { type = 'log'; }
+        if (!this.debug) {
+            if (type === 'error') {
+                console.error(data);
+            }
+            else {
+                console.log(data);
+            }
+        }
+    };
     var _a;
     _a = BestagonGrid;
     BestagonGrid.HEX_RADIUS = 100;
+    BestagonGrid.HEX_DIAGONAL_LONG = _a.HEX_RADIUS * 2;
     BestagonGrid.HEX_APOTHEM = 87;
-    BestagonGrid.HEX_POLYGON = "".concat(_a.HEX_RADIUS * 2, ",").concat(_a.HEX_APOTHEM, " ").concat(_a.HEX_RADIUS * 1.5, ",0 ").concat(_a.HEX_RADIUS / 2, ",0 0,").concat(_a.HEX_APOTHEM, " ").concat(_a.HEX_RADIUS / 2, ",").concat(_a.HEX_APOTHEM * 2, " ").concat(_a.HEX_RADIUS * 1.5, ",").concat(_a.HEX_APOTHEM * 2);
+    BestagonGrid.HEX_DIAGONAL_SHORT = _a.HEX_APOTHEM * 2;
+    BestagonGrid.HEX_POLYGON = "".concat(_a.HEX_DIAGONAL_LONG, ",").concat(_a.HEX_APOTHEM, " ").concat(_a.HEX_RADIUS * 1.5, ",0 ").concat(_a.HEX_RADIUS / 2, ",0 0,").concat(_a.HEX_APOTHEM, " ").concat(_a.HEX_RADIUS / 2, ",").concat(_a.HEX_DIAGONAL_SHORT, " ").concat(_a.HEX_RADIUS * 1.5, ",").concat(_a.HEX_DIAGONAL_SHORT);
     BestagonGrid.HEX_OFFSETS = {
         X: _a.HEX_RADIUS * 1.5,
         Y: _a.HEX_APOTHEM,
